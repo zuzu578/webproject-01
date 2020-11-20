@@ -1,0 +1,84 @@
+JSON(JavaScriopt Object Notation)
+
+var ob={};   // 빈객체
+var ob={key1:value1,key2=value1}    // 키쪽은 다음표가 없어도 된다.  
+var ob={name:'John',age:28,mobile:'01055554444'}
+family:['Jane','Smith','Honey']}
+
+
+String str="{name:'John',age:28,mobile:'01055554444'}
+family:['Jane','Smith','Honey']}";
+
+
+
+.java
+
+url="jdbc:oracle:thin:@localhost:1521:orcl";//SID = database name  1521포트번호  oracle은 db이름이 아니다.
+		userid="system";
+		passwd="human123";
+		Connection conn=null;
+		Statement stmt=null;
+		ResultSet rs=null;
+		PrintWriter out=response.getWriter();
+		
+		try {
+			String sql="select employee_id,emp_name,manager_id from employees order by emp_name";
+			
+			Class.forName("oracle.jdbc.driver.OracleDriver");
+			conn = DriverManager.getConnection(url,userid,passwd);  
+			stmt=conn.createStatement();
+			rs=stmt.executeQuery(sql);
+			JSONArray ja=new JSONArray();
+			while(rs.next()) {  
+				JSONObject jo=new JSONObject();
+				jo.put("emp_id",rs.getString("employee_id"));
+				jo.put("emp_name",rs.getString("emp_name"));
+				jo.put("man_id",rs.getInt("manager_id"));
+				ja.add(jo);
+			}
+			out.println(ja.toString());
+			out.close();
+		}catch(Exception e) {
+			out.println("error");
+		}finally {
+			try {
+				rs.close();
+			} catch (SQLException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+			try {
+				stmt.close();
+			} catch (SQLException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+			try {
+				conn.close();
+			} catch (SQLException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		}
+	}
+
+.jsp (javascript)
+<body>
+<table id=tblData border=1>
+</table><br><br>
+<input type=button id=btnGet value="가져오기">
+</body>
+<script src="https://code.jquery.com/jquery-3.5.0.js"></script>
+<script>
+$(document)
+.on('click','#btnGet',function(){
+	$.get('Ajaxservlet',{},function(data){
+		$.each(data,function(ndx,value){
+			name='<tr><td>'+value['emp_id']+'</td><td>'+value['emp_name']+'</td><td>'+value['man_id']+'</td></tr>';
+			$('#tblData').append(name);
+		})
+	
+	},'json')
+	return false;
+});
+</script>
